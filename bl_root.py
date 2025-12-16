@@ -223,7 +223,7 @@ def apatch_ios(secret):
     #将images.img文件push到用户目录
     logger.info("push img到用户下载目录")
     adb_shell("push iso\\boot.img ./sdcard/Download/")
-    # adb_shell("push iso\\AlwaysTrustUserCerts_v1.3.zip ./sdcard/Download/")
+    adb_shell("push iso\\AlwaysTrustUserCerts_v1.3.zip ./sdcard/Download/")
     adb_shell("push iso\\MoveCertificate-v1.5.5.zip ./sdcard/Download/")
 
 
@@ -254,9 +254,10 @@ def apatch_ios(secret):
         if obj.exists:
             break
         else:
-            time.sleep(0.5)
+            time.sleep(1)
 
-
+    #sleep防止判断太快文件系统还没反应过来，读取apatch修补后的文件为None的情况
+    time.sleep(2)
 
     logger.info("将修补后的iso拉取到本地")
     files = adb_shell("shell ls /sdcard/Download/").splitlines()
@@ -294,11 +295,11 @@ if __name__ == '__main__':
     print('----------------------')
 
     secret = 'zhuying666'
-    print(secret)
-    # # 确保打开oem，如果未打开自动开启
-    # open_oem()
-    # # 重启到bootloader发送解锁BL命令
-    # unlock()
+
+    # 确保打开oem，如果未打开自动开启
+    open_oem()
+    # 重启到bootloader发送解锁BL命令
+    unlock()
     # 自动安装apatch，手动操作修补完后继续自动pull修补后的文件到本地
     apatch_file = apatch_ios(secret)
 
